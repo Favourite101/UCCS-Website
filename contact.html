@@ -30,6 +30,7 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
     <script src="js/lightbox.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 
@@ -123,8 +124,7 @@
                     <div class="row g-0">
                         <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
                             <div class="h-100 d-flex flex-column justify-content-center p-5">
-                                <p class="mb-4">The contact form is currently inactive. Get a functional and working contact form with Ajax & PHP in a few minutes. Just copy and paste the files, add a little code and you're done. <a href="https://htmlcodex.com/contact-form">Download Now</a>.</p>
-                                <form>
+                                <form id="contactForm" method="POST">
                                     <div class="row g-3">
                                         <div class="col-sm-6">
                                             <div class="form-floating">
@@ -151,10 +151,11 @@
                                             </div>
                                         </div>
                                         <div class="col-12">
-                                            <button class="btn btn-primary w-100 py-3" type="submit">Send Message</button>
+                                            <button class="btn btn-primary w-100 py-3" id="bt-2" type="submit">Send Message</button>
                                         </div>
                                     </div>
                                 </form>
+                                <p id="submission-message" class="alert-link"></p>
                             </div>
                         </div>
                         <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s" style="min-height: 400px;">
@@ -263,6 +264,46 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+
+    <script>
+        const contactForm = document.getElementById('contactForm');
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const submitButton = document.getElementById('bt-2');
+            submitButton.disabled = true;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+
+            const data = {
+                name: name,
+                email: email,
+                subject: subject,
+                message: message
+            };
+
+          // Send POST request using Axios
+          axios.post('https://prod-13.westus2.logic.azure.com:443/workflows/fc93840246414bc28424b453ec8a2fd5/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=lXqIMWv2BJgCKcMDWyUE0RXt75Y4QAWLylF8XGuwOJo', data)
+            .then(function (response) {
+                console.log(response.data); // For debugging (optional)
+                const popup = document.getElementById('submission-message');
+                document.getElementById('submission-message').textContent = "Form submitted successfully! Our team will get back to you as soon as possible.";
+                submitButton.disabled = false;
+                contactForm.reset();
+                setTimeout(function() {
+                    popup.style.display = 'none';
+                }, 5000);
+            })
+            .catch(function (error) {
+              console.error(error);
+              document.getElementById('submission-message').textContent = "Error submitting form. Please try again.";
+              submitButton.disabled = false;
+              contactForm.reset();
+            });
+        });
+        </script>
 </body>
 
 </html>
