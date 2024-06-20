@@ -24,12 +24,4 @@
         ]);
         
         $response = file_get_contents($logicAppUrl, false, $context);
-
-        if ($response !== false) {
-            // Simple success check (limited information)
-            echo "Data submitted successfully!"; // Replace with your desired action
-        } else {
-            // Handle potential errors during request
-            echo "Error submitting data. Please try again."; // Replace with your desired error message
-        }
     }

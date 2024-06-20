@@ -517,13 +517,6 @@
             method: 'POST',
             body: new FormData(this) // Send form data
           })
-          .then(response => response.text())
-          .then(data => {
-            console.log('Server response:', data); // Handle server response (optional)
-          })
-          .catch(error => {
-            console.error('Error:', error); // Handle errors during communication (optional)
-          });
         });
         </script>
 </body>
