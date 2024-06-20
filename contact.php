@@ -8,24 +8,26 @@
     $subject = "$gname on behalf of $cname";
     $message = "Guardian Name: $gname\nGuardian Email: $gemail\nChild Name: $cname\nChild Age: $cage\nMessage: $tmessage";
 
-    use GuzzleHttp\Client;
-    $client = new Client();
-    $options = [
-        'json' => [ 
-            'email' => $to,
-            'due' => $message,
-            'task' => $subject
+    $postData = http_build_query([
+        'task' => $subject,
+        'due' => $message,
+        'email' => $to
+    ]);
+    
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'POST',
+            'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+            'content' => $postData
         ]
-    ];
+    ]);
+    
+    $response = file_get_contents(getenv($LOGIC_APP_URL), false, $context);
 
-    $promise = $client-> postAsync($logicAppUrl, $options)->then( 
-        function ($response) {
-            return $response->getStatusCode();
-        }, function ($exception) {
-            return $exception->getResponse();
-        }
-    );
-
-    $response = $promise->wait();
-    // Requires Laravel to run Log::info(). Check the documentation of your preferred framework for logging instructions.
-    error_log(print_r($response, TRUE));
+    if ($response !== false) {
+        // Simple success check (limited information)
+        echo "Data submitted successfully!"; // Replace with your desired action
+    } else {
+        // Handle potential errors during request
+        echo "Error submitting data. Please try again."; // Replace with your desired error message
+    }
