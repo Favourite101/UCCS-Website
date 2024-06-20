@@ -22,7 +22,7 @@
         ]
     ]);
     
-    $response = file_get_contents(getenv($LOGIC_APP_URL), false, $context);
+    $response = file_get_contents("https://prod-02.westus2.logic.azure.com:443/workflows/9e307297c1f74d0c9b3ecadd5872e0a0/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=KgjW0PXQhBerq5Cu6YKyJmYlOLPdLZ1TJuDCCMCHZzg", false, $context);
 
     if ($response !== false) {
         // Simple success check (limited information)
