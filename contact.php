@@ -1,5 +1,4 @@
 <?php
-// Replace with your Logic App URL and details
     $gname = $_POST['gname'];
     $gemail = $_POST['gemail'];
     $cname = $_POST['cname'];
