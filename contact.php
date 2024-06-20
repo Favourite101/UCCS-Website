@@ -1,11 +1,11 @@
 <?php
 // Replace with your Logic App URL and details
     $logicAppUrl = "https://prod-02.westus2.logic.azure.com/workflows/9e307297c1f74d0c9b3ecadd5872e0a0/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=KgjW0PXQhBerq5Cu6YKyJmYlOLPdLZ1TJuDCCMCHZzg;"
-    $gname = $_GET['gname'];
-    $gemail = $_GET['gemail'];
-    $cname = $_GET['cname'];
-    $cage = $_GET['cage'];
-    $tmessage = $_GET['tmessage'];
+    $gname = $_POST['gname'];
+    $gemail = $_POST['gemail'];
+    $cname = $_POST['cname'];
+    $cage = $_POST['cage'];
+    $tmessage = $_POST['tmessage'];
     $to = "greatuccschools@gmail.com";
     $subject = "$gname on behalf of $cname";
     $message = "Guardian Name: $gname\nGuardian Email: $gemail\nChild Name: $cname\nChild Age: $cage\nMessage: $tmessage";
@@ -20,7 +20,7 @@
         ]
     ];
 
-    $promise = $client-> getAsync($logicAppUrl, $options)->then( 
+    $promise = $client-> postAsync($logicAppUrl, $options)->then( 
         function ($response) {
             return $response->getStatusCode();
         }, function ($exception) {
@@ -30,4 +30,4 @@
 
     $response = $promise->wait();
     // Requires Laravel to run Log::info(). Check the documentation of your preferred framework for logging instructions.
-    Log::info(print_r($response, TRUE));
+    error_log(print_r($response, TRUE));
