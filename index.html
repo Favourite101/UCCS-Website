@@ -29,6 +29,7 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
@@ -257,7 +258,7 @@
                         <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
                             <div class="h-100 d-flex flex-column justify-content-center p-5">
                                 <h1 class="mb-4">Make Appointment</h1>
-                                <form action="https://prod-02.westus2.logic.azure.com:443/workflows/9e307297c1f74d0c9b3ecadd5872e0a0/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=KgjW0PXQhBerq5Cu6YKyJmYlOLPdLZ1TJuDCCMCHZzg" id="contactForm" method="POST">
+                                <form id="contactForm" method="POST">
                                     <div class="row g-3">
                                         <div class="col-sm-6">
                                             <div class="form-floating">
@@ -267,7 +268,7 @@
                                         </div>
                                         <div class="col-sm-6">
                                             <div class="form-floating">
-                                                <input type="email" class="form-control border-0" name="gemail" id="gmail" placeholder="Guardian Email" required>
+                                                <input type="email" class="form-control border-0" name="gemail" id="gemail" placeholder="Guardian Email" required>
                                                 <label for="gemail">Guardian Email</label>
                                             </div>
                                         </div>
@@ -285,7 +286,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="form-floating">
-                                                <textarea class="form-control border-0" placeholder="Leave a message here" name="tmessage" id="message" style="height: 100px" required></textarea>
+                                                <textarea class="form-control border-0" placeholder="Leave a message here" name="message" id="message" style="height: 100px" required></textarea>
                                                 <label for="message">Message</label>
                                             </div>
                                         </div>
@@ -294,7 +295,7 @@
                                         </div>
                                     </div>
                                 </form>
-                                <p id="submission-message"></p>
+                                <p id="submission-message" class="alert-link"></p>
                             </div>
                         </div>
                         <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s" style="min-height: 400px;">
@@ -506,17 +507,46 @@
     <script src="js/main.js"></script>
 
     <script>
+        const contactForm = document.getElementById('contactForm');
         document.getElementById('contactForm').addEventListener('submit', function(event) {
-          event.preventDefault(); // Prevent default form submission
-        
-          // Simple success message (can be improved)
-          document.getElementById('submission-message').textContent = "Form submitted successfully!";
-        
-          // Logic App communication (uncomment if using contact.php for processing)
-          fetch('contact.php', {
-            method: 'POST',
-            body: new FormData(this) // Send form data
-          })
+            event.preventDefault();
+
+            const submitButton = document.getElementById('bt-1');
+            submitButton.disabled = true;
+            const gname = document.getElementById('gname').value;
+            const gemail = document.getElementById('gemail').value;
+            const cname = document.getElementById('cname').value;
+            const cage = document.getElementById('cage').value;
+            const message = document.getElementById('message').value;
+            
+            console.log(gname);
+
+            const data = {
+                gname: gname,
+                gemail: gemail,
+                cname: cname,
+                cage: cage,
+                message: message
+            };
+
+          // Send POST request using Axios
+          axios.post('https://prod-02.westus2.logic.azure.com:443/workflows/9e307297c1f74d0c9b3ecadd5872e0a0/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=KgjW0PXQhBerq5Cu6YKyJmYlOLPdLZ1TJuDCCMCHZzg', data)
+            .then(function (response) {
+                console.log(response.data); // For debugging (optional)
+                const popup = document.getElementById('submission-message');
+                document.getElementById('submission-message').textContent = "Form submitted successfully! Our team will get back to you as soon as possible.";
+                submitButton.disabled = false;
+                contactForm.reset();
+                setTimeout(function() {
+                    popup.style.display = 'none';
+                }, 5000);
+            })
+            .catch(function (error) {
+              console.error(error);
+              document.getElementById('submission-message').textContent = "Error submitting form. Please try again.";
+              submitButton.disabled = false;
+              contactForm.reset();
+            });
         });
         </script>
 </body>
