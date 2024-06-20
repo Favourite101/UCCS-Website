@@ -1,0 +1,8 @@
+{
+    "name": "favourr/uccschools",
+    "description": "Logic App integration with form submission",
+    "require": {
+      "guzzlehttp/guzzle": "^7.4"
+    }
+  }
+  
