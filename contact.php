@@ -10,33 +10,24 @@
     $subject = "$gname on behalf of $cname";
     $message = "Guardian Name: $gname\nGuardian Email: $gemail\nChild Name: $cname\nChild Age: $cage\nMessage: $tmessage";
 
-    // Prepare JSON data
-    $data = [
-        "task" => $subject,
-        "due" => $message,
-        "email" => $to,
+    use GuzzleHttp\Client;
+    $client = new Client();
+    $options = [
+        'json' => [ 
+            'email' => $to,
+            'due' => $message,
+            'task' => $subject
+        ]
     ];
 
-    try {
-    // Use Guzzle for HTTP requests
-    require 'vendor/autoload.php'; // Assuming Guzzle is installed via Composer
+    $promise = $client-> postAsync(getenv($LOGIC_APP_URL), $options)->then( 
+        function ($response) {
+            return $response->getStatusCode();
+        }, function ($exception) {
+            return $exception->getResponse();
+        }
+    );
 
-    $client = new GuzzleHttp\Client();
-
-    $response = $client->post($logicAppUrl, [
-        'headers' => [
-        'Content-Type' => 'application/json',
-        ],
-        'body' => json_encode($data),
-    ]);
-
-    // Check for successful response
-    if ($response->getStatusCode() === 200) {
-        echo "Task submitted successfully!";
-    } else {
-        echo "Error submitting task: " . $response->getBody();
-    }
-    } catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
-    }
-
+    $response = $promise->wait();
+    // Requires Laravel to run Log::info(). Check the documentation of your preferred framework for logging instructions.
+    Log::info(print_r($response, TRUE));
