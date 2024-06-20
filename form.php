@@ -7,3 +7,13 @@
     $to = "greatuccschools@gmail.com";
     $subject = "$gname on behalf of $cname";
     $message = "Guardian Name: $gname\nGuardian Email: $gemail\nChild Name: $cname\nChild Age: $cage\nMessage: $tmessage";
+
+    use GuzzleHttp\Client;
+    $client = new Client();
+    $options = [
+        'json' => [ 
+            'email' => $to,
+            'due' => $message,
+            'task' => $subject
+        ]
+    ];
