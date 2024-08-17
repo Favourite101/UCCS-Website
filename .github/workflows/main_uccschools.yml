@@ -1,7 +1,8 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
+# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
 
-name: Build and deploy PHP app to Azure Web App - uccschools
+name: Build and deploy Python app to Azure Web App - uccschools
 
 on:
   push:
@@ -16,29 +17,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: Set up Python version
+        uses: actions/setup-python@v5
         with:
-          php-version: '8.3'
+          python-version: '3.12'
 
-      - name: Check if composer.json exists
-        id: check_files
-        uses: andstor/file-existence-action@v1
-        with:
-          files: 'composer.json'
-
-      - name: Run composer install if composer.json exists
-        if: steps.check_files.outputs.files_exists == 'true'
-        run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
+      - name: Create and start virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+      
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        
+      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
+      - name: Upload artifact for deployment jobs
+        uses: actions/upload-artifact@v4
         with:
-          name: php-app
-          path: release.zip
+          name: python-app
+          path: |
+            release.zip
+            !venv/
 
   deploy:
     runs-on: ubuntu-latest
@@ -51,25 +54,25 @@ jobs:
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: php-app
+          name: python-app
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
+
       
       - name: Login to Azure
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_DAB663F884764C9FA02A20E6B9910989 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7C11FF279D5A43E1A35AA3AAC40BCD5E }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_7796E14D317941758575C16A5DA535D5 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_EF2688D25AF74B718F1E1F808CE5B344 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4E97AA96604D47489498A3159B8A992F }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FF4DB501E3634FC3A9FC0EE9ACA35BC5 }}
 
       - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'uccschools'
           slot-name: 'Production'
-          package: .
           
