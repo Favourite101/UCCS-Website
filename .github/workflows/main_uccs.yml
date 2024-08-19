@@ -2,7 +2,7 @@
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 # More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
 
-name: Build and deploy Python app to Azure Web App - uccschools
+name: Build and deploy Python app to Azure Web App - uccs
 
 on:
   push:
@@ -65,14 +65,14 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_EF2688D25AF74B718F1E1F808CE5B344 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4E97AA96604D47489498A3159B8A992F }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FF4DB501E3634FC3A9FC0EE9ACA35BC5 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_00D2D8D75CD749C2BAC61DE132C6886E }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_443611902B8A48A882E752E99AE9A399 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5DA2A254A9FF436383880ABDAEA88F8A }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
-          app-name: 'uccschools'
+          app-name: 'uccs'
           slot-name: 'Production'
           
