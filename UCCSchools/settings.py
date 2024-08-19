@@ -25,7 +25,12 @@ SECRET_KEY = 'django-insecure-^t1s+8e##4s=i8jjaa7u1i9%%p#j%=y__kg55@n8qci%h#=-@$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#ALLOWED_HOSTS = ['127.0.0.1', 'localhost',]
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'uccschools.azurewebsites.net',
+    'uccschools.com.ng',
+    'www.uccschools.com.ng',]
 
 INTERNAL_IPS = [
     '127.0.0.1',
